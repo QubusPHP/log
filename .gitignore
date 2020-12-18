@@ -1,0 +1,5 @@
+/config/
+/storage/logs/*.log
+/vendor/
+.phpcs-cache
+index.php
