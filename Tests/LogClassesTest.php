@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Qubus\Log\Filename;
@@ -42,14 +43,14 @@ class LogClassesTest extends TestCase
         $logFilename = new LogFilename();
         $logFormat = new LogFormat();
 
-        $this->assertInstanceOf(Filename::class, $logFilename);
-        $this->assertInstanceOf(Format::class, $logFormat);
+        Assert::assertInstanceOf(Filename::class, $logFilename);
+        Assert::assertInstanceOf(Format::class, $logFormat);
 
         $logger->setLogFilename($logFilename);
         $logger->setLogFormat($logFormat);
 
         $result = $logger->debug('A horse is a dog.');
-        $this->assertNull($result);
+        Assert::assertNull($result);
 
         $logs = $filesystem->read('debug' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
@@ -64,6 +65,6 @@ class LogClassesTest extends TestCase
             $containHorse = true;
         }
 
-        $this->assertFalse($containHorse);
+        Assert::assertFalse($containHorse);
     }
 }

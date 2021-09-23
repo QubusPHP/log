@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -69,26 +69,21 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param $level
-     * @return bool
      */
-    public function isAvailable($level)
+    public function isAvailable($level): bool
     {
         return $this->enabled && ($this->levels === null || in_array($level, $this->levels));
     }
 
-    /**
-     * @return string
-     */
-    protected function getDate()
+    protected function getDate(): string
     {
         return (new DateTime())->format($this->dateFormat);
     }
 
     /**
      * @param array $data
-     * @return string
      */
-    protected function stringify(array $data = [])
+    protected function stringify(array $data = []): string
     {
         return $data !== [] ? json_encode($data) : '';
     }
@@ -96,9 +91,8 @@ abstract class BaseLogger extends AbstractLogger
     /**
      * @param $message
      * @param array $context
-     * @return string
      */
-    protected function interpolate($message, array $context = [])
+    protected function interpolate($message, array $context = []): string
     {
         $replace = [];
         foreach ($context as $key => $val) {
@@ -111,7 +105,6 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param $name
-     * @return mixed
      * @throws Exception
      */
     public function __get($name)

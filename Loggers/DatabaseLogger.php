@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -22,17 +22,15 @@ use function implode;
 
 class DatabaseLogger extends BaseLogger
 {
-    /** @var string|null $table */
     public ?string $table = null;
 
-    /** @var PDO $db */
     protected PDO $db;
 
     /**
-     * @param $value
+     * @param PDO $value
      * @throws TypeException
      */
-    public function setDb($value)
+    public function setDb($value): void
     {
         if (! $value instanceof PDO) {
             throw new TypeException('To connect to the database, you will need to use PDO.');
@@ -40,10 +38,7 @@ class DatabaseLogger extends BaseLogger
         $this->db = $value;
     }
 
-    /**
-     * @return PDO
-     */
-    public function getDb()
+    public function getDb(): PDO
     {
         return $this->db;
     }
@@ -53,7 +48,7 @@ class DatabaseLogger extends BaseLogger
      * @param string $message
      * @param array $context
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $this->execute(
             [

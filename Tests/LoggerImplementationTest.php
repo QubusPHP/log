@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LoggerInterface;
@@ -31,7 +32,7 @@ class LoggerImplementationTest extends TestCase
         $adapter = new LocalFilesystemAdapter(dirname(__DIR__) . '/storage/logs/');
         $filesystem = new Filesystem($adapter);
         $logger = new FileLogger($filesystem, LogLevel::INFO);
-        $this->assertInstanceOf(LoggerInterface::class, $logger);
-        $this->assertInstanceOf(AbstractLogger::class, $logger);
+        Assert::assertInstanceOf(LoggerInterface::class, $logger);
+        Assert::assertInstanceOf(AbstractLogger::class, $logger);
     }
 }

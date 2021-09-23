@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Qubus\Log\Loggers\FileLogger;
@@ -36,7 +37,7 @@ class WriteToFileTest extends TestCase
         $logger = new FileLogger($filesystem, LogLevel::INFO);
 
         $result = $logger->info('A horse is a horse.');
-        $this->assertNull($result);
+        Assert::assertNull($result);
 
         $logs = $filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
@@ -51,7 +52,7 @@ class WriteToFileTest extends TestCase
             $containHorse = true;
         }
 
-        $this->assertTrue($containHorse);
+        Assert::assertTrue($containHorse);
     }
 
     public function testNotWritingToFile()
@@ -61,7 +62,7 @@ class WriteToFileTest extends TestCase
         $logger = new FileLogger($filesystem, LogLevel::INFO);
 
         $result = $logger->debug('A horse is a dog.');
-        $this->assertNull($result);
+        Assert::assertNull($result);
 
         $logs = $filesystem->read('debug' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
@@ -76,7 +77,7 @@ class WriteToFileTest extends TestCase
             $containHorse = true;
         }
 
-        $this->assertFalse($containHorse);
+        Assert::assertFalse($containHorse);
     }
 
     public function testWritingArrayToFile()
@@ -92,7 +93,7 @@ class WriteToFileTest extends TestCase
         ];
 
         $result = $logger->info('A horse is a horse.', $horses);
-        $this->assertNull($result);
+        Assert::assertNull($result);
 
         $logs = $filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
@@ -102,6 +103,6 @@ class WriteToFileTest extends TestCase
             $containsArray = true;
         }
 
-        $this->assertTrue($containsArray);
+        Assert::assertTrue($containsArray);
     }
 }

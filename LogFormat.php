@@ -4,7 +4,7 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker
+ * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
  *
  * @since      1.0.0
@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Qubus\Log;
 
 use DateTime;
+use Psr\Log\LogLevel;
+use Stringable;
 
 use function count;
-use function date;
-use function explode;
 use function is_array;
 use function is_object;
+use function json_encode;
 use function method_exists;
-use function microtime;
-use function print_r;
+use function strtoupper;
 use function strtr;
 
 class LogFormat implements Format
@@ -32,12 +32,12 @@ class LogFormat implements Format
      * Create the log format that will be used when writing to the file. It is
      * a template for the data: date/time, message, and an array.
      *
-     * @param string $level   PSR-3 log levels.
+     * @param string|LogLevel $level   PSR-3 log levels.
      * @param string $message The log message to be written.
      * @param array $context  An option array to be written to the log file.
      * @return string Return the string with the formatted log message.
      */
-    public function create($level, $message, array $context = [])
+    public function create(string|LogLevel $level, string|Stringable $message, array $context = [])
     {
         // Assemble the message. Ex. [2020-12-17 8:54:03.355345] [DEBUG] hello
         $message = '[' . (new DateTime())->format('Y-m-d G:i:s.u') . '] ' . '[' . strtoupper($level) . '] ' . $message;
@@ -55,11 +55,11 @@ class LogFormat implements Format
      * array as the key => value to replace the key (placeholder) with the value from the
      * array.
      *
-     * @param $message  string The message containing the string that needs filtered
-     * @param $context  array  An associative array of the key => value to interpolate
-     * @return string The message after it has been interpolated
+     * @param string $message The message containing the string that needs filtered
+     * @param array $context  An associative array of the key => value to interpolate
+     * @return string The message after it has been interpolated.
      */
-    protected function interpolate($message, array $context = [])
+    protected function interpolate(string $message, array $context = [])
     {
         // build a replacement array with braces around the context keys
         $replace = [];
@@ -76,9 +76,8 @@ class LogFormat implements Format
 
     /**
      * @param array $data
-     * @return string
      */
-    protected function stringify(array $data = [])
+    protected function stringify(array $data = []): string
     {
         return $data !== [] ? json_encode($data) : '';
     }
