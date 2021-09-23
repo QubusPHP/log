@@ -32,7 +32,7 @@ class DatabaseLogger extends BaseLogger
      * @param $value
      * @throws TypeException
      */
-    public function setDb($value)
+    public function setDb($value): void
     {
         if (! $value instanceof PDO) {
             throw new TypeException('To connect to the database, you will need to use PDO.');
@@ -43,7 +43,7 @@ class DatabaseLogger extends BaseLogger
     /**
      * @return PDO
      */
-    public function getDb()
+    public function getDb(): PDO
     {
         return $this->db;
     }
@@ -53,7 +53,7 @@ class DatabaseLogger extends BaseLogger
      * @param string $message
      * @param array $context
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $this->execute(
             [

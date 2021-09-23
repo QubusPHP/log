@@ -73,7 +73,7 @@ class PhpMailLogger extends BaseLogger
      * @param array $context
      * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         // If the level is greater than or equal to the threshold, then we should log it.
         if ($this->levels[$level] >= $this->levels[$this->threshold]) {
@@ -87,9 +87,9 @@ class PhpMailLogger extends BaseLogger
     /**
      * @param $content
      */
-    protected function send($content)
+    protected function send($content): void
     {
-        $contentType = $this->getContentType() ?: $this->isHtml($content) ? 'text/html' : 'text/plain';
+        $contentType = ($this->getContentType() ?: $this->isHtml($content)) ? 'text/html' : 'text/plain';
 
         if ($contentType !== 'text/html') {
             $content = wordwrap($content, $this->maxColumn);
@@ -158,7 +158,7 @@ class PhpMailLogger extends BaseLogger
     /**
      * @return mixed
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->contentType;
     }
@@ -179,7 +179,7 @@ class PhpMailLogger extends BaseLogger
         return $this;
     }
 
-    public function getEncoding()
+    public function getEncoding(): string
     {
         return $this->encoding;
     }
@@ -187,7 +187,7 @@ class PhpMailLogger extends BaseLogger
     /**
      * @param $value
      */
-    public function setTo($value)
+    public function setTo($value): void
     {
         $this->to = (array) $value;
     }
@@ -196,7 +196,7 @@ class PhpMailLogger extends BaseLogger
      * @param $value
      * @throws TypeException
      */
-    public function setFrom($value)
+    public function setFrom($value): void
     {
         $this->setHeader(sprintf('From: %s', $value));
     }
@@ -205,7 +205,7 @@ class PhpMailLogger extends BaseLogger
      * @param $data
      * @return bool
      */
-    protected function isHtml($data)
+    protected function isHtml($data): bool
     {
         return $data[0] === '<';
     }

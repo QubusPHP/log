@@ -61,7 +61,7 @@ class SwiftMailerLogger extends BaseLogger
      * @param array $context
      * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         // If the level is greater than or equal to the threshold, then we should log it.
         if ($this->levels[$level] >= $this->levels[$this->threshold]) {
@@ -75,7 +75,7 @@ class SwiftMailerLogger extends BaseLogger
     /**
      * @param $content
      */
-    protected function send($content)
+    protected function send($content): void
     {
         $this->mailer->send(function ($message) use ($content) {
             $message->from($this->from);

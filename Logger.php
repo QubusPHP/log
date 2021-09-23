@@ -33,10 +33,10 @@ class Logger extends AbstractLogger
      * @param array $context
      * @return null|void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         foreach ($this->loggers as $logger) {
-            if (! $logger instanceof BaseLogger || ! $logger->isAvailable($level)) {
+            if (!$logger instanceof BaseLogger && !$logger->isAvailable($level)) {
                 continue;
             }
             $logger->log($level, $message, $context);
