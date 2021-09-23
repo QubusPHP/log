@@ -2,5 +2,6 @@
 /storage/logs/*.log
 /vendor/
 .phpcs-cache
+.phpunit.result.cache
 composer.lock
 index.php
