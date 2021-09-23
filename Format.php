@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace Qubus\Log;
 
+use Psr\Log\LogLevel;
+use Stringable;
+
 interface Format
 {
-    public function create($level, $message, array $context = []);
+    public function create(string|LogLevel $level, string|Stringable $message, array $context = []);
 }

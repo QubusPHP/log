@@ -19,10 +19,12 @@ use Qubus\Exception\Data\TypeException;
 use Qubus\Log\Format;
 use Qubus\Log\LogFormat;
 use Qubus\Mail\Mailer;
+use Stringable;
+
+use function strpos;
 
 class SwiftMailerLogger extends BaseLogger
 {
-    /** @var string|null $subject */
     public ?string $subject = null;
 
     protected ?Mailer $mailer = null;
@@ -30,38 +32,31 @@ class SwiftMailerLogger extends BaseLogger
     /** @var string|array $to */
     protected $to;
 
-    /** @var string $from */
     protected string $from;
 
-    /** @var string $encoding */
     protected string $encoding = 'utf-8';
 
     /**
      * Lowest level of logging to write.
-     *
-     * @var LogLevel
      */
-    protected $threshold;
+    protected string|LogLevel $threshold;
 
-    /** @var Format|null $logFormat */
     protected ?Format $logFormat = null;
 
-    public function __construct(Mailer $mailer, $threshold, array $params = [])
+    public function __construct(Mailer $mailer, string|LogLevel $threshold, array $params = [])
     {
         parent::__construct($params);
-        
+
         $this->threshold = $threshold;
         $this->logFormat = new LogFormat();
         $this->mailer = $mailer;
     }
 
     /**
-     * @param mixed $level
-     * @param string $message
+     * @param string|LogLevel $level
      * @param array $context
-     * @return void
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         // If the level is greater than or equal to the threshold, then we should log it.
         if ($this->levels[$level] >= $this->levels[$this->threshold]) {
@@ -73,7 +68,7 @@ class SwiftMailerLogger extends BaseLogger
     }
 
     /**
-     * @param $content
+     * @param callable|Closure $content
      */
     protected function send($content): void
     {
@@ -88,11 +83,10 @@ class SwiftMailerLogger extends BaseLogger
     }
 
     /**
-     * @param $encoding
-     * @return $this
+     * @param string $encoding
      * @throws TypeException
      */
-    public function setEncoding($encoding)
+    public function setEncoding($encoding): void
     {
         if (strpos($encoding, "\n") !== false || strpos($encoding, "\r") !== false) {
             throw new TypeException('The encoding can not contain newline characters to prevent email header injection.');
@@ -101,17 +95,17 @@ class SwiftMailerLogger extends BaseLogger
         $this->encoding = $encoding;
     }
 
-    public function getEncoding()
+    public function getEncoding(): string
     {
         return $this->encoding;
     }
 
-    public function setFrom($value)
+    public function setFrom($value): void
     {
         $this->from = $value;
     }
 
-    public function setTo($value)
+    public function setTo($value): void
     {
         $this->to = (array) $value;
     }

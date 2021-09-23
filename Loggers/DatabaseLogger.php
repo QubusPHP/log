@@ -22,14 +22,12 @@ use function implode;
 
 class DatabaseLogger extends BaseLogger
 {
-    /** @var string|null $table */
     public ?string $table = null;
 
-    /** @var PDO $db */
     protected PDO $db;
 
     /**
-     * @param $value
+     * @param PDO $value
      * @throws TypeException
      */
     public function setDb($value): void
@@ -40,9 +38,6 @@ class DatabaseLogger extends BaseLogger
         $this->db = $value;
     }
 
-    /**
-     * @return PDO
-     */
     public function getDb(): PDO
     {
         return $this->db;

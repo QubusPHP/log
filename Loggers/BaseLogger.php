@@ -69,16 +69,12 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param $level
-     * @return bool
      */
     public function isAvailable($level): bool
     {
         return $this->enabled && ($this->levels === null || in_array($level, $this->levels));
     }
 
-    /**
-     * @return string
-     */
     protected function getDate(): string
     {
         return (new DateTime())->format($this->dateFormat);
@@ -86,7 +82,6 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param array $data
-     * @return string
      */
     protected function stringify(array $data = []): string
     {
@@ -96,7 +91,6 @@ abstract class BaseLogger extends AbstractLogger
     /**
      * @param $message
      * @param array $context
-     * @return string
      */
     protected function interpolate($message, array $context = []): string
     {

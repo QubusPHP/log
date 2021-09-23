@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Qubus\Log;
 
+use Psr\Log\LogLevel;
+
 interface Filename
 {
-    public function create($level, $filenameFormat, $filenameExtension);
+    public function create(string|LogLevel $level, string $filenameFormat, string $filenameExtension);
 }

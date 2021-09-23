@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Qubus\Log\Loggers;
 
 use League\Flysystem\FilesystemOperator;
+use Psr\Log\LogLevel;
 use Qubus\Log\Filename;
 use Qubus\Log\Format;
 use Qubus\Log\LogFilename;
 use Qubus\Log\LogFormat;
 use ReflectionException;
+use Stringable;
 
 class FileLogger extends BaseLogger
 {
@@ -30,10 +32,8 @@ class FileLogger extends BaseLogger
 
     /**
      * Lowest level of logging to write.
-     *
-     * @var LogLevel
      */
-    protected $threshold;
+    protected string|LogLevel $threshold;
 
     /**
      * Date format of the log filename.
@@ -51,11 +51,11 @@ class FileLogger extends BaseLogger
 
     /**
      * @param FilesystemOperator $filesystem Flysystem filesystem abstraction
-     * @param string             $threshold  Lowest level of logging to write
+     * @param string|LogLevel    $threshold  Lowest level of logging to write
      * @param array              $params
      * @throws ReflectionException
      */
-    public function __construct(FilesystemOperator $filesystem, $threshold, array $params = [])
+    public function __construct(FilesystemOperator $filesystem, string|LogLevel $threshold, array $params = [])
     {
         parent::__construct($params);
 
@@ -66,11 +66,10 @@ class FileLogger extends BaseLogger
     }
 
     /**
-     * @param mixed $level
-     * @param string $message
+     * @param string|LogLevel $level
      * @param array $context
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         // If the level is greater than or equal to the threshold, then we should log it.
         if ($this->levels[$level] >= $this->levels[$this->threshold]) {
@@ -99,20 +98,16 @@ class FileLogger extends BaseLogger
      * Set the log filename format using PHP's date parameters.
      *
      * @link https://secure.php.net/manual/en/function.date.php
-     *
-     * @param string $filenameFormat
      */
-    public function setFilenameFormat($filenameFormat): void
+    public function setFilenameFormat(string $filenameFormat): void
     {
         $this->filenameFormat = $filenameFormat;
     }
 
     /**
      * Set the filename extension. Ex: 'log' will be '.log'.
-     *
-     * @param string $filenameExtension
      */
-    public function setFilenameExtension($filenameExtension): void
+    public function setFilenameExtension(string $filenameExtension): void
     {
         $this->filenameExtension = $filenameExtension;
     }

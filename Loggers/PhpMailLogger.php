@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
+use Psr\Log\LogLevel;
 use Qubus\Exception\Data\TypeException;
 use Qubus\Log\Format;
 use Qubus\Log\LogFormat;
+use Stringable;
 
 use function array_merge;
 use function implode;
@@ -47,19 +49,17 @@ class PhpMailLogger extends BaseLogger
 
     /**
      * Lowest level of logging to write.
-     *
-     * @var LogLevel
      */
-    protected $threshold;
+    protected string|LogLevel $threshold;
 
     protected ?Format $logFormat = null;
 
     /**
-     * @param string $threshold Lowest level of logging to write.
+     * @param string|LogLevel $threshold Lowest level of logging to write.
      * @param array  $params
      * @throws ReflectionException
      */
-    public function __construct($threshold, array $params = [])
+    public function __construct(string|LogLevel $threshold, array $params = [])
     {
         parent::__construct($params);
 
@@ -68,12 +68,10 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param mixed $level
-     * @param string $message
+     * @param string|LogLevel $level
      * @param array $context
-     * @return void
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         // If the level is greater than or equal to the threshold, then we should log it.
         if ($this->levels[$level] >= $this->levels[$this->threshold]) {
@@ -112,7 +110,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $headers
+     * @param array $headers
      * @return $this
      * @throws TypeException
      */
@@ -129,7 +127,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $parameters
+     * @param string|array $parameters
      * @return $this
      */
     public function setParameter($parameters)
@@ -140,7 +138,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $contentType
+     * @param string $contentType
      * @return $this
      * @throws TypeException
      */
@@ -164,7 +162,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $encoding
+     * @param string $encoding
      * @return $this
      * @throws TypeException
      */
@@ -185,7 +183,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $value
+     * @param string|array $value
      */
     public function setTo($value): void
     {
@@ -193,7 +191,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $value
+     * @param string $value
      * @throws TypeException
      */
     public function setFrom($value): void
@@ -202,8 +200,7 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param $data
-     * @return bool
+     * @param array $data
      */
     protected function isHtml($data): bool
     {
