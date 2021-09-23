@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Qubus\Log\Loggers\FileLogger;
@@ -32,27 +33,27 @@ class LogLevelTest extends TestCase
         $logger = new FileLogger($filesystem, LogLevel::DEBUG);
 
         $emergencyResult = $logger->emergency('there is a spider in the house');
-        $this->assertNull($emergencyResult);
+        Assert::assertNull($emergencyResult);
 
         $alertResult = $logger->alert('there is a mouse in the house');
-        $this->assertNull($alertResult);
+        Assert::assertNull($alertResult);
 
         $criticalResult = $logger->critical('there is a dog in the house');
-        $this->assertNull($criticalResult);
+        Assert::assertNull($criticalResult);
 
         $errorResult = $logger->error('there is a house in the house');
-        $this->assertNull($errorResult);
+        Assert::assertNull($errorResult);
 
         $warningResult = $logger->warning('there is a spider outside the house');
-        $this->assertNull($warningResult);
+        Assert::assertNull($warningResult);
 
         $noticeResult = $logger->notice('i saw a picture of a spider');
-        $this->assertNull($noticeResult);
+        Assert::assertNull($noticeResult);
 
         $infoResult = $logger->info('i do not like spiders');
-        $this->assertNull($infoResult);
+        Assert::assertNull($infoResult);
 
         $debugResult = $logger->debug('i would pet a dog');
-        $this->assertNull($debugResult);
+        Assert::assertNull($debugResult);
     }
 }

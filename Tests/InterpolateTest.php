@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Qubus\Log\Logger;
@@ -75,6 +76,6 @@ class InterpolateTest extends TestCase
             $containsDog = true;
         }
 
-        $this->assertTrue($containsDog);
+        Assert::assertTrue($containsDog);
     }
 }

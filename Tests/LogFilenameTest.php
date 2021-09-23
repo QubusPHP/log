@@ -16,6 +16,7 @@ namespace Qubus\Tests\Log;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Qubus\Log\LogFilename;
@@ -35,7 +36,7 @@ class LogFilenameTest extends TestCase
         $logFile = new LogFilename();
         $expectedResult = 'info' . '-' . date('Y-m-d') . '.log';
         $result = $logFile->create('info', 'Y-m-d', 'log');
-        $this->assertEquals($expectedResult, $result);
+        Assert::assertEquals($expectedResult, $result);
     }
 
     public function testSettingPropertiesInLogger()
@@ -47,7 +48,7 @@ class LogFilenameTest extends TestCase
         $logger->setFilenameExtension('log');
 
         $result = $logger->info('A horse is a horse.');
-        $this->assertNull($result);
+        Assert::assertNull($result);
 
         $logs = $filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
@@ -62,6 +63,6 @@ class LogFilenameTest extends TestCase
             $containHorse = true;
         }
 
-        $this->assertTrue($containHorse);
+        Assert::assertTrue($containHorse);
     }
 }
