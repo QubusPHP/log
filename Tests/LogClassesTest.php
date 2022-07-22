@@ -14,11 +14,12 @@ declare(strict_types=1);
 
 namespace Qubus\Tests\Log;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Qubus\Config\Collection;
+use Qubus\FileSystem\Adapter\LocalFlysystemAdapter;
+use Qubus\FileSystem\FileSystem;
 use Qubus\Log\Filename;
 use Qubus\Log\Format;
 use Qubus\Log\LogFilename;
@@ -27,18 +28,29 @@ use Qubus\Log\Loggers\FileLogger;
 
 use function count;
 use function date;
-use function dirname;
 use function end;
 use function explode;
 use function strpos;
 
 class LogClassesTest extends TestCase
 {
+    protected LocalFlysystemAdapter $adapter;
+    protected FileSystem $filesystem;
+
+    public function setUp(): void
+    {
+        $config = Collection::factory([
+            'path' => __DIR__ . '/../config',
+        ]);
+
+        $this->adapter = new LocalFlysystemAdapter($config);
+        $this->filesystem = new FileSystem($this->adapter);
+
+    }
+    
     public function testSpecifyingLogClasses()
     {
-        $adapter = new LocalFilesystemAdapter(dirname(__DIR__) . '/storage/logs/');
-        $filesystem = new Filesystem($adapter);
-        $logger = new FileLogger($filesystem, LogLevel::INFO);
+        $logger = new FileLogger($this->filesystem, LogLevel::INFO);
 
         $logFilename = new LogFilename();
         $logFormat = new LogFormat();
@@ -52,7 +64,7 @@ class LogClassesTest extends TestCase
         $result = $logger->debug('A horse is a dog.');
         Assert::assertNull($result);
 
-        $logs = $filesystem->read('debug' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
+        $logs = $this->filesystem->read('debug' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
         $log = explode("\n", $logs); // explode the string by newline into an array
 

@@ -14,23 +14,33 @@ declare(strict_types=1);
 
 namespace Qubus\Tests\Log;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Qubus\Config\Collection;
+use Qubus\FileSystem\Adapter\LocalFlysystemAdapter;
+use Qubus\FileSystem\FileSystem;
 use Qubus\Log\Loggers\FileLogger;
-
-use function dirname;
 
 class LogLevelTest extends TestCase
 {
+    protected LocalFlysystemAdapter $adapter;
+    protected FileSystem $filesystem;
+
+    public function setUp(): void
+    {
+        $config = Collection::factory([
+            'path' => __DIR__ . '/../config',
+        ]);
+
+        $this->adapter = new LocalFlysystemAdapter($config);
+        $this->filesystem = new FileSystem($this->adapter);
+
+    }
+
     public function testLogLevels()
     {
-        $adapter = new LocalFilesystemAdapter(dirname(__DIR__) . '/storage/logs/');
-        $filesystem = new Filesystem($adapter);
-
-        $logger = new FileLogger($filesystem, LogLevel::DEBUG);
+        $logger = new FileLogger($this->filesystem, LogLevel::DEBUG);
 
         $emergencyResult = $logger->emergency('there is a spider in the house');
         Assert::assertNull($emergencyResult);
