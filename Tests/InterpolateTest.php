@@ -14,26 +14,38 @@ declare(strict_types=1);
 
 namespace Qubus\Tests\Log;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Qubus\Config\Collection;
+use Qubus\FileSystem\Adapter\LocalFlysystemAdapter;
+use Qubus\FileSystem\FileSystem;
 use Qubus\Log\Logger;
 use Qubus\Log\Loggers\FileLogger;
 use SplObjectStorage;
 
 use function date;
-use function dirname;
 use function strpos;
 
 class InterpolateTest extends TestCase
 {
+    protected LocalFlysystemAdapter $adapter;
+    protected FileSystem $filesystem;
+
+    public function setUp(): void
+    {
+        $config = Collection::factory([
+            'path' => __DIR__ . '/../config',
+        ]);
+
+        $this->adapter = new LocalFlysystemAdapter($config);
+        $this->filesystem = new FileSystem($this->adapter);
+
+    }
+
     public function testInterpolate()
     {
-        $adapter = new LocalFilesystemAdapter(dirname(__DIR__) . '/storage/logs/');
-        $filesystem = new Filesystem($adapter);
-        $logger = new FileLogger($filesystem, LogLevel::INFO);
+        $logger = new FileLogger($this->filesystem, LogLevel::INFO);
 
         $values = [
             'animal' => 'cat',
@@ -41,7 +53,7 @@ class InterpolateTest extends TestCase
 
         $logger->info('A horse is a {animal}.', $values);
 
-        $logs = $filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
+        $logs = $this->filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
         $containsCat = false;
 
@@ -55,10 +67,8 @@ class InterpolateTest extends TestCase
     public function testInterpolateWithSplObjectStorage()
     {
         $storage = new SplObjectStorage();
-        $adapter = new LocalFilesystemAdapter(dirname(__DIR__) . '/storage/logs/');
-        $filesystem = new Filesystem($adapter);
 
-        $storage->attach(new FileLogger($filesystem, LogLevel::INFO));
+        $storage->attach(new FileLogger($this->filesystem, LogLevel::INFO));
 
         $logger = new Logger($storage);
 
@@ -68,7 +78,7 @@ class InterpolateTest extends TestCase
 
         $logger->info('A pig is a {animal}.', $values);
 
-        $logs = $filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
+        $logs = $this->filesystem->read('info' . '-' . date('Y-m-d') . '.log'); // read the logs into a string
 
         $containsDog = false;
 

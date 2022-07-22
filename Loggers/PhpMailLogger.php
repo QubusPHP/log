@@ -47,11 +47,6 @@ class PhpMailLogger extends BaseLogger
 
     protected string $from;
 
-    /**
-     * Lowest level of logging to write.
-     */
-    protected string|LogLevel $threshold;
-
     protected ?Format $logFormat = null;
 
     /**
@@ -59,11 +54,12 @@ class PhpMailLogger extends BaseLogger
      * @param array  $params
      * @throws ReflectionException
      */
-    public function __construct(string|LogLevel $threshold, array $params = [])
-    {
+    public function __construct(
+        /** @var string|LogLevel Lowest level of logging to write. */
+        public readonly string|LogLevel $threshold,
+        array $params = []
+    ) {
         parent::__construct($params);
-
-        $this->threshold = $threshold;
         $this->logFormat = new LogFormat();
     }
 

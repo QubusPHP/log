@@ -21,11 +21,8 @@ use Stringable;
 
 class Logger extends AbstractLogger
 {
-    protected Iterator $loggers;
-
-    public function __construct(Iterator $loggers)
+    public function __construct(protected Iterator $loggers)
     {
-        $this->loggers = $loggers;
     }
 
     /**

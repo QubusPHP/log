@@ -16,6 +16,7 @@ namespace Qubus\Log\Loggers;
 
 use PDO;
 use Qubus\Exception\Data\TypeException;
+use Stringable;
 
 use function array_keys;
 use function implode;
@@ -45,10 +46,10 @@ class DatabaseLogger extends BaseLogger
 
     /**
      * @param mixed $level
-     * @param string $message
+     * @param string|Stringable $message
      * @param array $context
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         $this->execute(
             [
