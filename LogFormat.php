@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Qubus\Log;
 
-use DateTime;
 use Psr\Log\LogLevel;
+use Qubus\Support\DateTime\QubusDateTime;
 use Stringable;
 
 use function count;
@@ -40,7 +40,7 @@ class LogFormat implements Format
     public function create(string|LogLevel $level, string|Stringable $message, array $context = [])
     {
         // Assemble the message. Ex. [2020-12-17 8:54:03.355345] [DEBUG] hello
-        $message = '[' . (new DateTime())->format('Y-m-d G:i:s.u') . '] ' . '[' . strtoupper($level) . '] ' . $message;
+        $message = '[' . (new QubusDateTime())->format('Y-m-d G:i:s.u') . '] ' . '[' . strtoupper($level) . '] ' . $message;
 
         // If an array was passed as well, export it to a string
         if (count($context) > 0) {

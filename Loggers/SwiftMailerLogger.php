@@ -27,8 +27,6 @@ class SwiftMailerLogger extends BaseLogger
 {
     public ?string $subject = null;
 
-    protected ?Mailer $mailer = null;
-
     /** @var string|array $to */
     protected $to;
 
@@ -36,20 +34,16 @@ class SwiftMailerLogger extends BaseLogger
 
     protected string $encoding = 'utf-8';
 
-    /**
-     * Lowest level of logging to write.
-     */
-    protected string|LogLevel $threshold;
-
     protected ?Format $logFormat = null;
 
-    public function __construct(Mailer $mailer, string|LogLevel $threshold, array $params = [])
-    {
+    public function __construct(
+        public readonly Mailer $mailer,
+        /** @var string|LogLevel Lowest level of logging to write. */
+        public readonly string|LogLevel $threshold,
+        array $params = []
+    ) {
         parent::__construct($params);
-
-        $this->threshold = $threshold;
         $this->logFormat = new LogFormat();
-        $this->mailer = $mailer;
     }
 
     /**

@@ -26,16 +26,6 @@ use Stringable;
 class FileLogger extends BaseLogger
 {
     /**
-     * Flysystem filesystem abstraction.
-     */
-    protected ?FilesystemOperator $filesystem = null;
-
-    /**
-     * Lowest level of logging to write.
-     */
-    protected string|LogLevel $threshold;
-
-    /**
      * Date format of the log filename.
      */
     protected string $filenameFormat = 'Y-m-d';
@@ -55,12 +45,13 @@ class FileLogger extends BaseLogger
      * @param array              $params
      * @throws ReflectionException
      */
-    public function __construct(FilesystemOperator $filesystem, string|LogLevel $threshold, array $params = [])
-    {
+    public function __construct(
+        public readonly FilesystemOperator $filesystem,
+        /** @var string|LogLevel Lowest level of logging to write. */
+        public readonly string|LogLevel $threshold,
+        array $params = []
+    ) {
         parent::__construct($params);
-
-        $this->filesystem = $filesystem;
-        $this->threshold = $threshold;
         $this->logFormat = new LogFormat();
         $this->logFilename = new LogFilename();
     }
