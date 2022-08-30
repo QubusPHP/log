@@ -1,6 +1,7 @@
 /config/
 /storage/logs/*.log
 /vendor/
+.php-cs-fixer.cache
 .phpcs-cache
 .phpunit.result.cache
 composer.lock
