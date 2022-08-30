@@ -14,10 +14,12 @@ declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Qubus\Exception\Data\TypeException;
 use Qubus\Log\Format;
 use Qubus\Log\LogFormat;
+use ReflectionException;
 use Stringable;
 
 use function array_merge;
@@ -28,14 +30,14 @@ use function sprintf;
 use function strpos;
 use function wordwrap;
 
-class PhpMailLogger extends BaseLogger
+class PhpMailLogger extends BaseLogger implements LoggerInterface
 {
     public string $subject;
 
     public int $maxColumn = 50;
 
     /** @var string|array $to */
-    protected $to;
+    protected string|array $to;
 
     protected array $headers = [];
 
@@ -55,11 +57,11 @@ class PhpMailLogger extends BaseLogger
      * @throws ReflectionException
      */
     public function __construct(
-        /** @var string|LogLevel Lowest level of logging to write. */
+        /** @var string|LogLevel $threshold Lowest level of logging to write. */
         public readonly string|LogLevel $threshold,
         array $params = []
     ) {
-        parent::__construct($params);
+        parent::__construct(params: $params);
         $this->logFormat = new LogFormat();
     }
 
@@ -74,7 +76,7 @@ class PhpMailLogger extends BaseLogger
             // Create a new LogFormat instance to format the log entry.
             $body = $this->logFormat->create($level, $message, $context);
             // Send email.
-            $this->send($body);
+            $this->send(content: $body);
         }
     }
 
@@ -83,25 +85,25 @@ class PhpMailLogger extends BaseLogger
      */
     protected function send($content): void
     {
-        $contentType = ($this->getContentType() ?: $this->isHtml($content)) ? 'text/html' : 'text/plain';
+        $contentType = ($this->getContentType() ?: $this->isHtml(data: $content)) ? 'text/html' : 'text/plain';
 
         if ($contentType !== 'text/html') {
-            $content = wordwrap($content, $this->maxColumn);
+            $content = wordwrap(string: $content, width: $this->maxColumn);
         }
 
-        $headers = ltrim(implode("\r\n", $this->headers) . "\r\n", "\r\n");
+        $headers = ltrim(string: implode(separator: "\r\n", array: $this->headers) . "\r\n", characters: "\r\n");
         $headers .= 'Content-type: ' . $contentType . '; charset=' . $this->getEncoding() . "\r\n";
 
-        if ($contentType === 'text/html' && false === strpos($headers, 'MIME-Version:')) {
+        if ($contentType === 'text/html' && false === strpos(haystack: $headers, needle: 'MIME-Version:')) {
             $headers .= 'MIME-Version: 1.0' . "\r\n";
         }
 
         $subject = $this->subject;
 
-        $parameters = implode(' ', $this->parameters);
+        $parameters = implode(separator: ' ', array: $this->parameters);
 
         foreach ($this->to as $to) {
-            mail($to, $subject, $content, $headers, $parameters);
+            mail(to: $to, subject: $subject, message: $content, additional_headers: $headers, additional_params: $parameters);
         }
     }
 
@@ -110,11 +112,11 @@ class PhpMailLogger extends BaseLogger
      * @return $this
      * @throws TypeException
      */
-    public function setHeader($headers)
+    public function setHeader(array $headers): static
     {
         foreach ((array) $headers as $header) {
-            if (strpos($header, "\n") !== false || strpos($header, "\r") !== false) {
-                throw new TypeException('Headers can not contain newline characters for security reasons.');
+            if (strpos(haystack: $header, needle: "\n") !== false || strpos(haystack: $header, needle: "\r") !== false) {
+                throw new TypeException(message: 'Headers can not contain newline characters for security reasons.');
             }
             $this->headers[] = $header;
         }
@@ -123,10 +125,10 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param string|array $parameters
+     * @param array|string $parameters
      * @return $this
      */
-    public function setParameter($parameters)
+    public function setParameter(array|string $parameters): static
     {
         $this->parameters = array_merge($this->parameters, (array) $parameters);
 
@@ -138,10 +140,12 @@ class PhpMailLogger extends BaseLogger
      * @return $this
      * @throws TypeException
      */
-    public function setContentType($contentType)
+    public function setContentType(string $contentType): static
     {
-        if (strpos($contentType, "\n") !== false || strpos($contentType, "\r") !== false) {
-            throw new TypeException('The content type can not contain newline characters to prevent email header injection.');
+        if (strpos(haystack: $contentType, needle: "\n") !== false || strpos(haystack: $contentType, needle: "\r") !== false) {
+            throw new TypeException(
+                message: 'The content type can not contain newline characters to prevent email header injection.'
+            );
         }
 
         $this->contentType = $contentType;
@@ -162,10 +166,12 @@ class PhpMailLogger extends BaseLogger
      * @return $this
      * @throws TypeException
      */
-    public function setEncoding($encoding)
+    public function setEncoding(string $encoding): static
     {
         if (strpos($encoding, "\n") !== false || strpos($encoding, "\r") !== false) {
-            throw new TypeException('The encoding can not contain newline characters to prevent email header injection');
+            throw new TypeException(
+                message: 'The encoding can not contain newline characters to prevent email header injection'
+            );
         }
 
         $this->encoding = $encoding;
@@ -179,9 +185,9 @@ class PhpMailLogger extends BaseLogger
     }
 
     /**
-     * @param string|array $value
+     * @param array|string $value
      */
-    public function setTo($value): void
+    public function setTo(array|string $value): void
     {
         $this->to = (array) $value;
     }
@@ -190,15 +196,15 @@ class PhpMailLogger extends BaseLogger
      * @param string $value
      * @throws TypeException
      */
-    public function setFrom($value): void
+    public function setFrom(string $value): void
     {
-        $this->setHeader(sprintf('From: %s', $value));
+        $this->setHeader((array)sprintf('From: %s', $value));
     }
 
     /**
      * @param array $data
      */
-    protected function isHtml($data): bool
+    protected function isHtml(array $data): bool
     {
         return $data[0] === '<';
     }

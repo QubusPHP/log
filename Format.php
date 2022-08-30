@@ -19,5 +19,5 @@ use Stringable;
 
 interface Format
 {
-    public function create(string|LogLevel $level, string|Stringable $message, array $context = []);
+    public function create(string|LogLevel $level, string|Stringable $message, array $context = []): string;
 }

@@ -28,7 +28,7 @@ class LogFilename implements Filename
      * @param string $filenameExtension Accepts a file extension such as log.
      * @return string The filename for the log file that will be written
      */
-    public function create(string|LogLevel $level, string $filenameFormat, string $filenameExtension)
+    public function create(string|LogLevel $level, string $filenameFormat, string $filenameExtension): string
     {
         return $level . '-' . date($filenameFormat) . '.' . $filenameExtension;
     }
