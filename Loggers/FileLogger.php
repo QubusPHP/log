@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Qubus\Log\Filename;
 use Qubus\Log\Format;
@@ -23,7 +25,7 @@ use Qubus\Log\LogFormat;
 use ReflectionException;
 use Stringable;
 
-class FileLogger extends BaseLogger
+class FileLogger extends BaseLogger implements LoggerInterface
 {
     /**
      * Date format of the log filename.
@@ -51,7 +53,7 @@ class FileLogger extends BaseLogger
         public readonly string|LogLevel $threshold,
         array $params = []
     ) {
-        parent::__construct($params);
+        parent::__construct(params: $params);
         $this->logFormat = new LogFormat();
         $this->logFilename = new LogFilename();
     }
@@ -59,6 +61,7 @@ class FileLogger extends BaseLogger
     /**
      * @param string|LogLevel $level
      * @param array $context
+     * @throws FilesystemException
      */
     public function log($level, string|Stringable $message, array $context = []): void
     {
@@ -73,15 +76,15 @@ class FileLogger extends BaseLogger
             $contents = '';
 
             // Check and see if the file exists.
-            if ($this->filesystem->fileExists($filename)) {
+            if ($this->filesystem->fileExists(location: $filename)) {
                 // Get the contents of the file before writing to it. This is so it can be appended.
-                $contents = $this->filesystem->read($filename);
+                $contents = $this->filesystem->read(location: $filename);
             }
 
             $contents .= $message;
 
             // Write the log message from the Log Format instance to the Log Format file name instance.
-            $this->filesystem->write($filename, $contents . "\n");
+            $this->filesystem->write(location: $filename, contents: $contents . "\n");
         }
     }
 

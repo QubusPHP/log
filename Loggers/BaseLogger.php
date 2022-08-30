@@ -30,8 +30,8 @@ use function strtr;
 
 abstract class BaseLogger extends AbstractLogger
 {
-    public $enabled = true;
-    public $dateFormat = 'Y-m-d G:i:s.u';
+    public bool $enabled = true;
+    public string $dateFormat = 'Y-m-d G:i:s.u';
 
     /**
      * Associative array of the log levels that are given a numerical value
@@ -39,7 +39,7 @@ abstract class BaseLogger extends AbstractLogger
      *
      * @var array
      */
-    public $levels = [
+    public array $levels = [
         LogLevel::EMERGENCY => 7,
         LogLevel::ALERT     => 6,
         LogLevel::CRITICAL  => 5,
@@ -58,8 +58,8 @@ abstract class BaseLogger extends AbstractLogger
     {
         $reflection = new ReflectionClass($this);
         foreach ($params as $name => $value) {
-            $property = $reflection->getProperty($name);
-            if ($reflection->hasMethod('set' . $name)) {
+            $property = $reflection->getProperty(name: $name);
+            if ($reflection->hasMethod(name: 'set' . $name)) {
                 $this->{'set' . $name}($value);
             } elseif ($property->isPublic()) {
                 $this->{$name} = $value;
@@ -77,7 +77,7 @@ abstract class BaseLogger extends AbstractLogger
 
     protected function getDate(): string
     {
-        return (new DateTime())->format($this->dateFormat);
+        return (new DateTime())->format(format: $this->dateFormat);
     }
 
     /**
@@ -85,7 +85,7 @@ abstract class BaseLogger extends AbstractLogger
      */
     protected function stringify(array $data = []): string
     {
-        return $data !== [] ? json_encode($data) : '';
+        return $data !== [] ? json_encode(value: $data) : '';
     }
 
     /**
@@ -96,7 +96,7 @@ abstract class BaseLogger extends AbstractLogger
     {
         $replace = [];
         foreach ($context as $key => $val) {
-            if (! is_array($val) && (! is_object($val) || method_exists($val, '__toString'))) {
+            if (! is_array(value: $val) && (! is_object(value: $val) || method_exists(object_or_class: $val, method: '__toString'))) {
                 $replace['{' . $key . '}'] = $val;
             }
         }
@@ -110,14 +110,14 @@ abstract class BaseLogger extends AbstractLogger
     public function __get($name)
     {
         $getter = 'get' . $name;
-        if (method_exists($this, $getter)) {
+        if (method_exists(object_or_class: $this, method: $getter)) {
             return $this->{$getter};
         }
-        if (method_exists($this, 'set' . $name)) {
-            throw new Exception('Getting write-only property: ' . static::class . '::' . $name);
+        if (method_exists(object_or_class: $this, method: 'set' . $name)) {
+            throw new Exception(message: 'Getting write-only property: ' . static::class . '::' . $name);
         }
 
-        throw new Exception('Getting unknown property: ' . static::class . '::' . $name);
+        throw new Exception(message: 'Getting unknown property: ' . static::class . '::' . $name);
     }
 
     /**
@@ -128,12 +128,12 @@ abstract class BaseLogger extends AbstractLogger
     public function __set($name, $value)
     {
         $setter = 'set' . $name;
-        if (method_exists($this, $setter)) {
+        if (method_exists(object_or_class: $this, method: $setter)) {
             $this->{$setter}($value);
-        } elseif (method_exists($this, 'get' . $name)) {
-            throw new Exception('Setting read-only property: ' . static::class . '::' . $name);
+        } elseif (method_exists(object_or_class: $this, method: 'get' . $name)) {
+            throw new Exception(message: 'Setting read-only property: ' . static::class . '::' . $name);
         } else {
-            throw new Exception('Setting unknown property: ' . static::class . '::' . $name);
+            throw new Exception(message: 'Setting unknown property: ' . static::class . '::' . $name);
         }
     }
 
@@ -144,7 +144,7 @@ abstract class BaseLogger extends AbstractLogger
     public function __isset($name)
     {
         $getter = 'get' . $name;
-        if (method_exists($this, $getter)) {
+        if (method_exists(object_or_class: $this, method: $getter)) {
             return $this->{$getter}() !== null;
         }
         return false;
