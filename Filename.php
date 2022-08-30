@@ -18,5 +18,5 @@ use Psr\Log\LogLevel;
 
 interface Filename
 {
-    public function create(string|LogLevel $level, string $filenameFormat, string $filenameExtension);
+    public function create(string|LogLevel $level, string $filenameFormat, string $filenameExtension): string;
 }

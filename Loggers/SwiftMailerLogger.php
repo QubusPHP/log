@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
+use Closure;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Qubus\Exception\Data\TypeException;
 use Qubus\Log\Format;
@@ -23,12 +25,11 @@ use Stringable;
 
 use function strpos;
 
-class SwiftMailerLogger extends BaseLogger
+class SwiftMailerLogger extends BaseLogger implements LoggerInterface
 {
     public ?string $subject = null;
 
-    /** @var string|array $to */
-    protected $to;
+    protected string|array $to;
 
     protected string $from;
 
@@ -38,11 +39,11 @@ class SwiftMailerLogger extends BaseLogger
 
     public function __construct(
         public readonly Mailer $mailer,
-        /** @var string|LogLevel Lowest level of logging to write. */
+        /** @var string|LogLevel $threshold Lowest level of logging to write. */
         public readonly string|LogLevel $threshold,
         array $params = []
     ) {
-        parent::__construct($params);
+        parent::__construct(params: $params);
         $this->logFormat = new LogFormat();
     }
 
@@ -61,12 +62,9 @@ class SwiftMailerLogger extends BaseLogger
         }
     }
 
-    /**
-     * @param callable|Closure $content
-     */
-    protected function send($content): void
+    protected function send(callable|Closure $content): void
     {
-        $this->mailer->send(function ($message) use ($content) {
+        $this->mailer->send(callback: function ($message) use ($content) {
             $message->from($this->from);
             $message->to($this->to);
             $message->subject($this->subject);
@@ -77,13 +75,17 @@ class SwiftMailerLogger extends BaseLogger
     }
 
     /**
-     * @param string $encoding
      * @throws TypeException
      */
-    public function setEncoding($encoding): void
+    public function setEncoding(string $encoding): void
     {
-        if (strpos($encoding, "\n") !== false || strpos($encoding, "\r") !== false) {
-            throw new TypeException('The encoding can not contain newline characters to prevent email header injection.');
+        if (
+            strpos(haystack: $encoding, needle: "\n") !== false
+            || strpos(haystack: $encoding, needle: "\r") !== false
+        ) {
+            throw new TypeException(
+                message: 'The encoding can not contain newline characters to prevent email header injection.'
+            );
         }
 
         $this->encoding = $encoding;

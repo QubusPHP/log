@@ -15,26 +15,27 @@ declare(strict_types=1);
 namespace Qubus\Log\Loggers;
 
 use PDO;
+use Psr\Log\LoggerInterface;
 use Qubus\Exception\Data\TypeException;
 use Stringable;
 
 use function array_keys;
 use function implode;
+use function sprintf;
 
-class DatabaseLogger extends BaseLogger
+class DatabaseLogger extends BaseLogger implements LoggerInterface
 {
     public ?string $table = null;
 
     protected PDO $db;
 
     /**
-     * @param PDO $value
      * @throws TypeException
      */
-    public function setDb($value): void
+    public function setDb(PDO $value): void
     {
         if (! $value instanceof PDO) {
-            throw new TypeException('To connect to the database, you will need to use PDO.');
+            throw new TypeException(message: 'To connect to the database, you will need to use PDO.');
         }
         $this->db = $value;
     }
@@ -46,7 +47,6 @@ class DatabaseLogger extends BaseLogger
 
     /**
      * @param mixed $level
-     * @param string|Stringable $message
      * @param array $context
      */
     public function log($level, string|Stringable $message, array $context = []): void
@@ -55,8 +55,8 @@ class DatabaseLogger extends BaseLogger
             [
                 'date'    => $this->getDate(),
                 'level'   => $level,
-                'message' => $this->interpolate($message, $context),
-                'context' => $this->stringify($context),
+                'message' => $this->interpolate(message: $message, context: $context),
+                'context' => $this->stringify(data: $context),
             ]
         );
     }
@@ -66,9 +66,9 @@ class DatabaseLogger extends BaseLogger
      */
     protected function execute(array $data)
     {
-        $keys = array_keys($data);
-        $sth = $this->getDb()->prepare('INSERT INTO ' . $this->table
-            . ' (' . implode(', ', $keys) . ') VALUES ( ' . implode(', :', $keys) . ')');
-        $sth->execute($data);
+        $keys = array_keys(array: $data);
+        $sth = $this->getDb()->prepare(query: sprintf('INSERT INTO %s', $this->table)
+            . ' (' . implode(separator: ', ', array: $keys) . ') VALUES ( ' . implode(separator: ', :', array: $keys) . ')');
+        $sth->execute(params: $data);
     }
 }
