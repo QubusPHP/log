@@ -1,3 +1,6 @@
+## 2.0.3 (2022.09.07)
+- Fixed TypeError for send method.
+
 ## 2.0.0 (2022.07.21)
 - Updated for PHP 8.1
 

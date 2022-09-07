@@ -62,7 +62,7 @@ class SwiftMailerLogger extends BaseLogger implements LoggerInterface
         }
     }
 
-    protected function send(callable|Closure $content): void
+    protected function send(mixed $content): void
     {
         $this->mailer->send(callback: function ($message) use ($content) {
             $message->from($this->from);
