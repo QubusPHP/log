@@ -30,7 +30,7 @@ class LogClassesTest extends TestCase
     public function setUp(): void
     {
         $config = Collection::factory([
-            'path' => __DIR__ . '/../config',
+            'path' => __DIR__ . '/config',
         ]);
 
         $this->adapter = new LocalFlysystemAdapter($config);
@@ -39,7 +39,7 @@ class LogClassesTest extends TestCase
     
     public function testSpecifyingLogClasses()
     {
-        $logger = new FileLogger($this->filesystem, LogLevel::INFO);
+        $logger = new FileLogger($this->filesystem, LogLevel::DEBUG);
 
         $logFilename = new LogFilename();
         $logFormat = new LogFormat();
