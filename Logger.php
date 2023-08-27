@@ -4,10 +4,9 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
@@ -28,6 +27,7 @@ class Logger extends AbstractLogger
 
     /**
      * @param string|LogLevel $level
+     * @param string|Stringable $message
      * @param array $context
      */
     public function log($level, string|Stringable $message, array $context = []): void

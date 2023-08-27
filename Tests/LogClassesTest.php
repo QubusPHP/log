@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Qubus\Log
- *
- * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
- * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
- */
-
 declare(strict_types=1);
 
 namespace Qubus\Tests\Log;
@@ -40,17 +30,16 @@ class LogClassesTest extends TestCase
     public function setUp(): void
     {
         $config = Collection::factory([
-            'path' => __DIR__ . '/../config',
+            'path' => __DIR__ . '/config',
         ]);
 
         $this->adapter = new LocalFlysystemAdapter($config);
         $this->filesystem = new FileSystem($this->adapter);
-
     }
     
     public function testSpecifyingLogClasses()
     {
-        $logger = new FileLogger($this->filesystem, LogLevel::INFO);
+        $logger = new FileLogger($this->filesystem, LogLevel::DEBUG);
 
         $logFilename = new LogFilename();
         $logFormat = new LogFormat();

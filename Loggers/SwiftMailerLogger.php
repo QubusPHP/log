@@ -4,17 +4,15 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
-use Closure;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Qubus\Exception\Data\TypeException;
@@ -49,6 +47,7 @@ class SwiftMailerLogger extends BaseLogger implements LoggerInterface
 
     /**
      * @param string|LogLevel $level
+     * @param string|Stringable $message
      * @param array $context
      */
     public function log($level, string|Stringable $message, array $context = []): void
@@ -79,8 +78,7 @@ class SwiftMailerLogger extends BaseLogger implements LoggerInterface
      */
     public function setEncoding(string $encoding): void
     {
-        if (
-            strpos(haystack: $encoding, needle: "\n") !== false
+        if (strpos(haystack: $encoding, needle: "\n") !== false
             || strpos(haystack: $encoding, needle: "\r") !== false
         ) {
             throw new TypeException(

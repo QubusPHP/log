@@ -4,10 +4,9 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
@@ -66,8 +65,7 @@ class LogFormat implements Format
         $replace = [];
         foreach ($context as $key => $val) {
             // check that the value can be cast to string
-            if (
-                ! is_array(value: $val)
+            if (! is_array(value: $val)
                 && (! is_object(value: $val) || method_exists(object_or_class: $val, method: '__toString'))
             ) {
                 $replace['{' . $key . '}'] = $val;
@@ -80,6 +78,7 @@ class LogFormat implements Format
 
     /**
      * @param array $data
+     * @return string
      */
     protected function stringify(array $data = []): string
     {

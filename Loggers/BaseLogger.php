@@ -4,10 +4,9 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
@@ -69,6 +68,7 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param $level
+     * @return bool
      */
     public function isAvailable($level): bool
     {
@@ -82,6 +82,7 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param array $data
+     * @return string
      */
     protected function stringify(array $data = []): string
     {
@@ -91,12 +92,14 @@ abstract class BaseLogger extends AbstractLogger
     /**
      * @param $message
      * @param array $context
+     * @return string
      */
     protected function interpolate($message, array $context = []): string
     {
         $replace = [];
         foreach ($context as $key => $val) {
-            if (! is_array(value: $val) && (! is_object(value: $val) || method_exists(object_or_class: $val, method: '__toString'))) {
+            if (! is_array(value: $val) &&
+                (! is_object(value: $val) || method_exists(object_or_class: $val, method: '__toString'))) {
                 $replace['{' . $key . '}'] = $val;
             }
         }
@@ -105,6 +108,7 @@ abstract class BaseLogger extends AbstractLogger
 
     /**
      * @param $name
+     * @return mixed
      * @throws Exception
      */
     public function __get($name)
