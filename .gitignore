@@ -1,5 +1,4 @@
-/config/
-/storage/logs/*.log
+/Tests/storage/logs/*.log
 /vendor/
 .idea
 .php-cs-fixer.cache
