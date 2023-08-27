@@ -4,10 +4,9 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
@@ -67,6 +66,7 @@ class PhpMailLogger extends BaseLogger implements LoggerInterface
 
     /**
      * @param string|LogLevel $level
+     * @param string|Stringable $message
      * @param array $context
      */
     public function log($level, string|Stringable $message, array $context = []): void
@@ -103,7 +103,13 @@ class PhpMailLogger extends BaseLogger implements LoggerInterface
         $parameters = implode(separator: ' ', array: $this->parameters);
 
         foreach ($this->to as $to) {
-            mail(to: $to, subject: $subject, message: $content, additional_headers: $headers, additional_params: $parameters);
+            mail(
+                to: $to,
+                subject: $subject,
+                message: $content,
+                additional_headers: $headers,
+                additional_params: $parameters
+            );
         }
     }
 
@@ -203,6 +209,7 @@ class PhpMailLogger extends BaseLogger implements LoggerInterface
 
     /**
      * @param array $data
+     * @return bool
      */
     protected function isHtml(array $data): bool
     {

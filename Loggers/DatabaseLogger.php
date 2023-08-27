@@ -4,10 +4,9 @@
  * Qubus\Log
  *
  * @link       https://github.com/QubusPHP/log
- * @copyright  2020 Joshua Parker <josh@joshuaparker.blog>
+ * @copyright  2020
+ * @author     Joshua Parker <joshua@joshuaparker.dev>
  * @license    https://opensource.org/licenses/mit-license.php MIT License
- *
- * @since      1.0.0
  */
 
 declare(strict_types=1);
@@ -47,6 +46,7 @@ class DatabaseLogger extends BaseLogger implements LoggerInterface
 
     /**
      * @param mixed $level
+     * @param string|Stringable $message
      * @param array $context
      */
     public function log($level, string|Stringable $message, array $context = []): void
@@ -64,7 +64,7 @@ class DatabaseLogger extends BaseLogger implements LoggerInterface
     /**
      * @param array $data
      */
-    protected function execute(array $data)
+    protected function execute(array $data): void
     {
         $keys = array_keys(array: $data);
         $sth = $this->getDb()->prepare(query: sprintf('INSERT INTO %s', $this->table)
