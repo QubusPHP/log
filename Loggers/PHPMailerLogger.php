@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Qubus\Log\Loggers;
 
+use PHPMailer\PHPMailer\Exception;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Qubus\Exception\Data\TypeException;
@@ -23,7 +24,7 @@ use Stringable;
 
 use function strpos;
 
-class SwiftMailerLogger extends BaseLogger implements LoggerInterface
+class PHPMailerLogger extends BaseLogger implements LoggerInterface
 {
     public ?string $subject = null;
 
@@ -61,16 +62,20 @@ class SwiftMailerLogger extends BaseLogger implements LoggerInterface
         }
     }
 
+    /**
+     * @throws Exception
+     * @throws \Qubus\Exception\Exception
+     */
     protected function send(mixed $content): void
     {
-        $this->mailer->send(callback: function ($message) use ($content) {
-            $message->from($this->from);
-            $message->to($this->to);
-            $message->subject($this->subject);
-            $message->body($content);
-            $message->charset($this->encoding);
-            $message->html(true);
-        });
+        $this->mailer
+            ->withFrom($this->from)
+            ->withTo($this->to)
+            ->withSubject($this->subject)
+            ->withBody($content)
+            ->withCharset($this->encoding)
+            ->withHtml(true)
+            ->send();
     }
 
     /**
