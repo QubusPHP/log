@@ -59,6 +59,7 @@ class FileLogger extends BaseLogger implements LoggerInterface
 
     /**
      * @param string|LogLevel $level
+     * @param string|Stringable $message
      * @param array $context
      * @throws FilesystemException
      */
