@@ -24,7 +24,7 @@
         "psr/log": "^3",
         "qubus/exception": "^3",
         "qubus/filesystem": "^3",
-        "qubus/mail": "^3",
+        "qubus/mail": "^4",
         "qubus/support": "^3"
     },
     "require-dev": {
