@@ -58,7 +58,11 @@ class PHPMailerLogger extends BaseLogger implements LoggerInterface
             // Create a new LogFormat instance to format the log entry.
             $body = $this->logFormat->create($level, $message, $context);
             // Send email.
-            $this->send($body);
+            try {
+                $this->send($body);
+            } catch (Exception|\Qubus\Exception\Exception $e) {
+                $this->error(message: $e->getMessage());
+            }
         }
     }
 
@@ -69,12 +73,13 @@ class PHPMailerLogger extends BaseLogger implements LoggerInterface
     protected function send(mixed $content): void
     {
         $this->mailer
-            ->withFrom($this->from)
-            ->withTo($this->to)
-            ->withSubject($this->subject)
-            ->withBody($content)
-            ->withCharset($this->encoding)
-            ->withHtml(true)
+            ->withSmtp()
+            ->withFrom(address: $this->from)
+            ->withTo(address: $this->to)
+            ->withSubject(subject: $this->subject)
+            ->withBody(data: $content)
+            ->withCharset(charset: $this->encoding)
+            ->withHtml(isHtml: true)
             ->send();
     }
 
